@@ -69,6 +69,10 @@ function mapDomain(string: string, fn: (string: string)=>string): string {
  * this function will convert a pair of surrogate halves (each of which
  * UCS-2 exposes as separate characters) into a single code point,
  * matching UTF-16.
+ * 
+ *     ucs2decode([0x61, 0x62, 0x63]); // 'abc'
+ *     ucs2decode([0x1D306]); // '\uD834\uDF06'
+ * 
  * @see <https://mathiasbynens.be/notes/javascript-encoding>
  * @param string The Unicode input string (UCS-2).
  * @returns The new array of code points.
@@ -99,6 +103,10 @@ export function ucs2decode(string: string): number[] {
 
 /**
  * Creates a string based on an array of numeric code points.
+ * 
+ *     ucs2encode([0x61, 0x62, 0x63]); // [0x61, 0x62, 0x63]
+ *     ucs2encode('\uD834\uDF06'); // [0x1D306]
+ * 
  * @param codePoints The array of numeric code points.
  * @returns The new Unicode string (UCS-2).
  */
@@ -161,6 +169,10 @@ function adapt(delta: number, numPoints: number, firstTime: boolean): number {
 /**
  * Converts a Punycode string of ASCII-only symbols to a string of Unicode
  * symbols.
+ * 
+ *     decode('maana-pta'); // 'mañana'
+ *     decode('--dqo34k'); // '☃-⌘'
+ * 
  * @param input The Punycode string of ASCII-only symbols.
  * @returns The resulting string of Unicode symbols.
  */
@@ -251,6 +263,10 @@ export function decode(input: string): string {
 /**
  * Converts a string of Unicode symbols (e.g. a domain name label) to a
  * Punycode string of ASCII-only symbols.
+ * 
+ *     encode('mañana'); // 'maana-pta'
+ *     encode('☃-⌘'); // '--dqo34k'
+ * 
  * @param input The string of Unicode symbols.
  * @returns The resulting Punycode string of ASCII-only symbols.
  */
@@ -347,6 +363,11 @@ export function encode(input: string): string {
  * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
  * it doesn't matter if you call it on a string that has already been
  * converted to Unicode.
+ * 
+ *     toUnicode('xn--maana-pta.com'); // 'mañana.com'
+ *     toUnicode('xn----dqo34k.com'); // '☃-⌘.com'
+ *     toUnicode('джумла@xn--p-8sbkgc5ag7bhce.xn--ba-lmcq'); // 'джумла@джpумлатест.bрфa'
+ * 
  * @param input The Punycoded domain name or email address to
  * convert to Unicode.
  * @returns The Unicode representation of the given Punycode
@@ -365,6 +386,11 @@ export function toUnicode(input: string): string {
  * Punycode. Only the non-ASCII parts of the domain name will be converted,
  * i.e. it doesn't matter if you call it with a domain that's already in
  * ASCII.
+ * 
+ *     toASCII('mañana.com'); // 'xn--maana-pta.com'
+ *     toASCII('☃-⌘.com'); // 'xn----dqo34k.com'
+ *     toASCII('джумла@джpумлатест.bрфa'); // 'джумла@xn--p-8sbkgc5ag7bhce.xn--ba-lmcq'
+ * 
  * @param input The domain name or email address to convert, as a
  * Unicode string.
  * @returns The Punycode representation of the given domain name or
