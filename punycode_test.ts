@@ -1,5 +1,5 @@
 import { assertThrows, assertEquals } from "https://deno.land/std@0.52.0/testing/asserts.ts";
-import punycode from './punycode.ts';
+import { ucs2decode, ucs2encode, decode, encode, toASCII, toUnicode } from './punycode.ts';
 
 const testData = {
 	'strings': [
@@ -237,108 +237,108 @@ const testData = {
 };
 
 for (const object of testData.ucs2) {
-	Deno.test('punycode.ucs2.decode: ' + object.description, function() {
+	Deno.test('ucs2decode: ' + object.description, function() {
 		assertEquals(
-			punycode.ucs2.decode(object.encoded),
+			ucs2decode(object.encoded),
 			object.decoded,
 			object.description
 		);
 	});
 }
-Deno.test('punycode.ucs2.decode: throws RangeError: Illegal input >= 0x80 (not a basic code point)', function() {
+Deno.test('ucs2decode: throws RangeError: Illegal input >= 0x80 (not a basic code point)', function() {
 	assertThrows(
 		function() {
-			punycode.decode('\x81-');
+			decode('\x81-');
 		},
 		RangeError
 	);
 });
-Deno.test('punycode.ucs2.decode: throws RangeError: Overflow: input needs wider integers to process', function() {
+Deno.test('ucs2decode: throws RangeError: Overflow: input needs wider integers to process', function() {
 	assertThrows(
 		function() {
-			punycode.decode('\x81');
+			decode('\x81');
 		},
 		RangeError
 	);
 });
 
 for (const object of testData.ucs2) {
-	Deno.test('punycode.ucs2.encode: ' + object.description, function() {
+	Deno.test('ucs2encode: ' + object.description, function() {
 		assertEquals(
-			punycode.ucs2.encode(object.decoded),
+			ucs2encode(object.decoded),
 			object.encoded
 		);
 	});
 }
 const codePoints = [0x61, 0x62, 0x63];
-const result = punycode.ucs2.encode(codePoints);
-Deno.test('punycode.ucs2.encode: does not mutate argument array', function() {
+const result = ucs2encode(codePoints);
+Deno.test('ucs2encode: does not mutate argument array', function() {
 	assertEquals(result, 'abc');
 	assertEquals(codePoints, [0x61, 0x62, 0x63]);
 });
 
 for (const object of testData.strings) {
-	Deno.test('punycode.decode: ' + (object.description || object.encoded), function() {
+	Deno.test('decode: ' + (object.description || object.encoded), function() {
 		assertEquals(
-			punycode.decode(object.encoded),
+			decode(object.encoded),
 			object.decoded
 		);
 	});
 }
-Deno.test('punycode.decode: handles uppercase Z', function() {
-	assertEquals(punycode.decode('ZZZ'), '\u7BA5');
+Deno.test('decode: handles uppercase Z', function() {
+	assertEquals(decode('ZZZ'), '\u7BA5');
 });
 
 for (const object of testData.strings) {
-	Deno.test('punycode.encode: ' + (object.description || object.decoded), function() {
+	Deno.test('encode: ' + (object.description || object.decoded), function() {
 		assertEquals(
-			punycode.encode(object.decoded),
+			encode(object.decoded),
 			object.encoded
 		);
 	});
 }
 
 for (const object of testData.domains) {
-	Deno.test('punycode.toUnicode: ' + (object.description || object.encoded), function() {
+	Deno.test('toUnicode: ' + (object.description || object.encoded), function() {
 		assertEquals(
-			punycode.toUnicode(object.encoded),
+			toUnicode(object.encoded),
 			object.decoded
 		);
 	});
 }
 for (const object of testData.strings) {
-	Deno.test('punycode.toUnicode: does not convert names (or other strings) that don\'t start with `xn--`', function() {
+	Deno.test('toUnicode: does not convert names (or other strings) that don\'t start with `xn--`', function() {
 		assertEquals(
-			punycode.toUnicode(object.encoded),
+			toUnicode(object.encoded),
 			object.encoded
 		);
 		assertEquals(
-			punycode.toUnicode(object.decoded),
+			toUnicode(object.decoded),
 			object.decoded
 		);
 	});
 }
 
 for (const object of testData.domains) {
-	Deno.test('punycode.toASCII: ' + (object.description || object.decoded), function() {
+	Deno.test('toASCII: ' + (object.description || object.decoded), function() {
 		assertEquals(
-			punycode.toASCII(object.decoded),
+			toASCII(object.decoded),
 			object.encoded
 		);
 	});
 }
 for (const object of testData.strings) {
-	Deno.test('punycode.toASCII: does not convert domain names (or other strings) that are already in ASCII', function() {
+	Deno.test('toASCII: does not convert domain names (or other strings) that are already in ASCII', function() {
 		assertEquals(
-			punycode.toASCII(object.encoded),
+			toASCII(object.encoded),
 			object.encoded
 		);
 	});
 }
 for (const object of testData.separators) {
-	Deno.test('punycode.toASCII: supports IDNA2003 separators for backwards compatibility', function() {
+	Deno.test('toASCII: supports IDNA2003 separators for backwards compatibility', function() {
 		assertEquals(
-			punycode.toASCII(object.decoded),
+			toASCII(object.decoded),
 			object.encoded
 		);
 	});
