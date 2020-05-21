@@ -26,7 +26,6 @@ const errors: { [key: string]: string } = {
 /** Convenience shortcuts */
 const baseMinusTMin = base - tMin;
 const floor = Math.floor;
-const stringFromCharCode = String.fromCharCode;
 
 /*--------------------------------------------------------------------------*/
 
@@ -38,22 +37,6 @@ const stringFromCharCode = String.fromCharCode;
  */
 function error(type: string) {
 	throw new RangeError(errors[type]);
-}
-
-/**
- * A generic `Array#map` utility function.
- * @private
- * @param array The array to iterate over.
- * @param callback The function that gets called for every array item.
- * @returns A new array of values returned by the callback function.
- */
-function map(array: string[], fn: (string: string)=>string): string[] {
-	const result = [];
-	let length = array.length;
-	while (length--) {
-		result[length] = fn(array[length]);
-	}
-	return result;
 }
 
 /**
@@ -76,7 +59,7 @@ function mapDomain(string: string, fn: (string: string)=>string): string {
 	// Avoid `split(regex)` for IE8 compatibility. See #17.
 	string = string.replace(regexSeparators, '\x2E');
 	const labels = string.split('.');
-	const encoded = map(labels, fn).join('.');
+	const encoded = labels.map(fn).join('.');
 	return result + encoded;
 }
 
@@ -131,7 +114,7 @@ export function ucs2encode(array: number[]): string {
  * representing integers) in the range `0` to `base - 1`, or `base` if
  * the code point does not represent a value.
  */
-const basicToDigit = function(codePoint: number): number {
+function basicToDigit(codePoint: number): number {
 	if (codePoint - 0x30 < 0x0A) {
 		return codePoint - 0x16;
 	}
@@ -154,7 +137,7 @@ const basicToDigit = function(codePoint: number): number {
  * used; else, the lowercase form is used. The behavior is undefined
  * if `flag` is non-zero and `digit` has no uppercase form.
  */
-const digitToBasic = function(digit: number, flag: number): number {
+function digitToBasic(digit: number, flag: number): number {
 	//  0..25 map to ASCII a..z or A..Z
 	// 26..35 map to ASCII 0..9
 	return digit + 22 + 75 * +(digit < 26) - (+(flag != 0) << 5);
@@ -165,7 +148,7 @@ const digitToBasic = function(digit: number, flag: number): number {
  * https://tools.ietf.org/html/rfc3492#section-3.4
  * @private
  */
-const adapt = function(delta: number, numPoints: number, firstTime: boolean): number {
+function adapt(delta: number, numPoints: number, firstTime: boolean): number {
 	let k = 0;
 	delta = firstTime ? floor(delta / damp) : delta >> 1;
 	delta += floor(delta / numPoints);
@@ -288,7 +271,7 @@ export function encode(input: string): string {
 	// Handle the basic code points.
 	for (const currentValue of decoded) {
 		if (currentValue < 0x80) {
-			output.push(stringFromCharCode(currentValue));
+			output.push(String.fromCharCode(currentValue));
 		}
 	}
 
@@ -340,12 +323,12 @@ export function encode(input: string): string {
 					const qMinusT = q - t;
 					const baseMinusT = base - t;
 					output.push(
-						stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+						String.fromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
 					);
 					q = floor(qMinusT / baseMinusT);
 				}
 
-				output.push(stringFromCharCode(digitToBasic(q, 0)));
+				output.push(String.fromCharCode(digitToBasic(q, 0)));
 				bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
 				delta = 0;
 				++handledCPCount;
@@ -370,11 +353,11 @@ export function encode(input: string): string {
  * string.
  */
 export function toUnicode(input: string): string {
-	return mapDomain(input, function(string: string): string {
-		return regexPunycode.test(string)
+	return mapDomain(input, (string: string): string =>
+		regexPunycode.test(string)
 			? decode(string.slice(4).toLowerCase())
-			: string;
-	});
+			: string
+	);
 };
 
 /**
@@ -388,11 +371,11 @@ export function toUnicode(input: string): string {
  * email address.
  */
 export function toASCII(input: string): string {
-	return mapDomain(input, function(string: string): string {
-		return regexNonASCII.test(string)
+	return mapDomain(input, (string: string): string =>
+		regexNonASCII.test(string)
 			? 'xn--' + encode(string)
-			: string;
-	});
+			: string
+	);
 };
 
 /*--------------------------------------------------------------------------*/
