@@ -1,4 +1,4 @@
-# Punycode.ts
+# Punycode.ts [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/punycode/punycode.ts)
 
 Port of [Punycode.js](https://github.com/bestiejs/punycode.js)
 
