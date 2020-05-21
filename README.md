@@ -7,7 +7,7 @@ A robust Punycode converter that fully complies to [RFC 3492](https://tools.ietf
 ## Installation
 
 ```js
-import { ucs2decode, ucs2encode, decode, encode, toASCII, toUnicode } from './punycode.ts';
+import { ucs2decode, ucs2encode, decode, encode, toASCII, toUnicode } from 'https://deno.land/x/punycode/punycode.ts';
 ```
 
 ## API
