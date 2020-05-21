@@ -70,8 +70,8 @@ function mapDomain(string: string, fn: (string: string)=>string): string {
  * UCS-2 exposes as separate characters) into a single code point,
  * matching UTF-16.
  * 
- *     ucs2decode([0x61, 0x62, 0x63]); // 'abc'
- *     ucs2decode([0x1D306]); // '\uD834\uDF06'
+ *     ucs2decode('abc'); // [0x61, 0x62, 0x63]
+ *     ucs2decode('\uD834\uDF06'); // [0x1D306]
  * 
  * @see <https://mathiasbynens.be/notes/javascript-encoding>
  * @param string The Unicode input string (UCS-2).
@@ -104,8 +104,8 @@ export function ucs2decode(string: string): number[] {
 /**
  * Creates a string based on an array of numeric code points.
  * 
- *     ucs2encode([0x61, 0x62, 0x63]); // [0x61, 0x62, 0x63]
- *     ucs2encode('\uD834\uDF06'); // [0x1D306]
+ *     ucs2encode([0x61, 0x62, 0x63]); // 'abc'
+ *     ucs2encode([0x1D306]); // '\uD834\uDF06'
  * 
  * @param codePoints The array of numeric code points.
  * @returns The new Unicode string (UCS-2).
