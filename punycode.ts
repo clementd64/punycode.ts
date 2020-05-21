@@ -33,8 +33,8 @@ const stringFromCharCode = String.fromCharCode;
 /**
  * A generic error utility function.
  * @private
- * @param {String} type The error type.
- * @returns {Error} Throws a `RangeError` with the applicable error message.
+ * @param type The error type.
+ * @returns Throws a `RangeError` with the applicable error message.
  */
 function error(type: string) {
 	throw new RangeError(errors[type]);
@@ -43,10 +43,9 @@ function error(type: string) {
 /**
  * A generic `Array#map` utility function.
  * @private
- * @param {Array} array The array to iterate over.
- * @param {Function} callback The function that gets called for every array
- * item.
- * @returns {Array} A new array of values returned by the callback function.
+ * @param array The array to iterate over.
+ * @param callback The function that gets called for every array item.
+ * @returns A new array of values returned by the callback function.
  */
 function map(array: string[], fn: (string: string)=>string): string[] {
 	const result = [];
@@ -61,11 +60,9 @@ function map(array: string[], fn: (string: string)=>string): string[] {
  * A simple `Array#map`-like wrapper to work with domain name strings or email
  * addresses.
  * @private
- * @param {String} domain The domain name or email address.
- * @param {Function} callback The function that gets called for every
- * character.
- * @returns {String} A new string of characters returned by the callback
- * function.
+ * @param domain The domain name or email address.
+ * @param callback The function that gets called for every character.
+ * @returns A new string of characters returned by the callback function.
  */
 function mapDomain(string: string, fn: (string: string)=>string): string {
 	const parts = string.split('@');
@@ -89,12 +86,9 @@ function mapDomain(string: string, fn: (string: string)=>string): string {
  * this function will convert a pair of surrogate halves (each of which
  * UCS-2 exposes as separate characters) into a single code point,
  * matching UTF-16.
- * @see `punycode.ucs2.encode`
  * @see <https://mathiasbynens.be/notes/javascript-encoding>
- * @memberOf punycode.ucs2
- * @name decode
- * @param {String} string The Unicode input string (UCS-2).
- * @returns {Array} The new array of code points.
+ * @param string The Unicode input string (UCS-2).
+ * @returns The new array of code points.
  */
 export function ucs2decode(string: string): number[] {
 	const output = [];
@@ -122,20 +116,18 @@ export function ucs2decode(string: string): number[] {
 
 /**
  * Creates a string based on an array of numeric code points.
- * @see `punycode.ucs2.decode`
- * @memberOf punycode.ucs2
- * @name encode
- * @param {Array} codePoints The array of numeric code points.
- * @returns {String} The new Unicode string (UCS-2).
+ * @param codePoints The array of numeric code points.
+ * @returns The new Unicode string (UCS-2).
  */
-export const ucs2encode = (array: number[]): string => String.fromCodePoint(...array);
+export function ucs2encode(array: number[]): string {
+	return String.fromCodePoint(...array);
+}
 
 /**
  * Converts a basic code point into a digit/integer.
- * @see `digitToBasic()`
  * @private
- * @param {Number} codePoint The basic numeric code point value.
- * @returns {Number} The numeric value of a basic code point (for use in
+ * @param codePoint The basic numeric code point value.
+ * @returns The numeric value of a basic code point (for use in
  * representing integers) in the range `0` to `base - 1`, or `base` if
  * the code point does not represent a value.
  */
@@ -154,10 +146,9 @@ const basicToDigit = function(codePoint: number): number {
 
 /**
  * Converts a digit/integer into a basic code point.
- * @see `basicToDigit()`
  * @private
- * @param {Number} digit The numeric value of a basic code point.
- * @returns {Number} The basic code point whose value (when used for
+ * @param digit The numeric value of a basic code point.
+ * @returns The basic code point whose value (when used for
  * representing integers) is `digit`, which needs to be in the range
  * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
  * used; else, the lowercase form is used. The behavior is undefined
@@ -187,11 +178,10 @@ const adapt = function(delta: number, numPoints: number, firstTime: boolean): nu
 /**
  * Converts a Punycode string of ASCII-only symbols to a string of Unicode
  * symbols.
- * @memberOf punycode
- * @param {String} input The Punycode string of ASCII-only symbols.
- * @returns {String} The resulting string of Unicode symbols.
+ * @param input The Punycode string of ASCII-only symbols.
+ * @returns The resulting string of Unicode symbols.
  */
-export const decode = function(input: string): string {
+export function decode(input: string): string {
 	// Don't use UCS-2.
 	const output = [];
 	const inputLength = input.length;
@@ -278,11 +268,10 @@ export const decode = function(input: string): string {
 /**
  * Converts a string of Unicode symbols (e.g. a domain name label) to a
  * Punycode string of ASCII-only symbols.
- * @memberOf punycode
- * @param {String} input The string of Unicode symbols.
- * @returns {String} The resulting Punycode string of ASCII-only symbols.
+ * @param input The string of Unicode symbols.
+ * @returns The resulting Punycode string of ASCII-only symbols.
  */
-export const encode = function(input: string): string {
+export function encode(input: string): string {
 	const output = [];
 
 	// Convert the input in UCS-2 to an array of Unicode code points.
@@ -375,13 +364,12 @@ export const encode = function(input: string): string {
  * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
  * it doesn't matter if you call it on a string that has already been
  * converted to Unicode.
- * @memberOf punycode
- * @param {String} input The Punycoded domain name or email address to
+ * @param input The Punycoded domain name or email address to
  * convert to Unicode.
- * @returns {String} The Unicode representation of the given Punycode
+ * @returns The Unicode representation of the given Punycode
  * string.
  */
-export const toUnicode = function(input: string): string {
+export function toUnicode(input: string): string {
 	return mapDomain(input, function(string: string): string {
 		return regexPunycode.test(string)
 			? decode(string.slice(4).toLowerCase())
@@ -394,13 +382,12 @@ export const toUnicode = function(input: string): string {
  * Punycode. Only the non-ASCII parts of the domain name will be converted,
  * i.e. it doesn't matter if you call it with a domain that's already in
  * ASCII.
- * @memberOf punycode
- * @param {String} input The domain name or email address to convert, as a
+ * @param input The domain name or email address to convert, as a
  * Unicode string.
- * @returns {String} The Punycode representation of the given domain name or
+ * @returns The Punycode representation of the given domain name or
  * email address.
  */
-export const toASCII = function(input: string): string {
+export function toASCII(input: string): string {
 	return mapDomain(input, function(string: string): string {
 		return regexNonASCII.test(string)
 			? 'xn--' + encode(string)
@@ -412,18 +399,12 @@ export const toASCII = function(input: string): string {
 
 /** Define the public API */
 const punycode = {
-	/**
-	 * A string representing the current Punycode.js version number.
-	 * @memberOf punycode
-	 * @type String
-	 */
+	/** A string representing the current Punycode.js version number. */
 	'version': '2.1.0',
 	/**
 	 * An object of methods to convert from JavaScript's internal character
 	 * representation (UCS-2) to Unicode code points, and back.
 	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-	 * @memberOf punycode
-	 * @type Object
 	 */
 	'ucs2': {
 		'decode': ucs2decode,
