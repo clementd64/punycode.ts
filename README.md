@@ -1,4 +1,4 @@
-# Punycode.ts [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/punycode/punycode.ts)
+# Punycode.ts [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/punycode/mod.ts)
 
 Port of [Punycode.js](https://github.com/bestiejs/punycode.js)
 
@@ -7,7 +7,7 @@ A robust Punycode converter that fully complies to [RFC 3492](https://tools.ietf
 ## Installation
 
 ```js
-import { ucs2decode, ucs2encode, decode, encode, toASCII, toUnicode } from 'https://deno.land/x/punycode/punycode.ts';
+import { ucs2decode, ucs2encode, decode, encode, toASCII, toUnicode } from 'https://deno.land/x/punycode/mod.ts';
 ```
 
 ## API

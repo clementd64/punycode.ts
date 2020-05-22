@@ -1,5 +1,5 @@
 import { assertThrows, assertEquals } from "https://deno.land/std@0.52.0/testing/asserts.ts";
-import { ucs2decode, ucs2encode, decode, encode, toASCII, toUnicode } from './punycode.ts';
+import { ucs2decode, ucs2encode, decode, encode, toASCII, toUnicode } from './mod.ts';
 
 const testData = {
 	'strings': [
